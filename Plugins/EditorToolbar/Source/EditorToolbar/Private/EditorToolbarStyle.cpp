@@ -46,7 +46,8 @@ TSharedRef< FSlateStyleSet > FEditorToolbarStyle::Create()
 	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("EditorToolbarStyle"));
 	Style->SetContentRoot(IPluginManager::Get().FindPlugin("EditorToolbar")->GetBaseDir() / TEXT("Resources"));
 
-	Style->Set("EditorToolbar.PluginAction", new IMAGE_BRUSH(TEXT("ButtonIcon_40x"), Icon40x40));
+	Style->Set("EditorToolbar.PluginAction", new IMAGE_BRUSH(TEXT("almang"), Icon40x40));
+	Style->Set("EditorToolbar.PluginAction2", new IMAGE_BRUSH(TEXT("kang"), Icon40x40));
 
 	return Style;
 }

@@ -3,10 +3,23 @@
 #include "EditorToolbar.h"
 #include "EditorToolbarStyle.h"
 #include "EditorToolbarCommands.h"
-#include "Misc/MessageDialog.h"
-#include "Framework/MultiBox/MultiBoxBuilder.h"
+//#include "Misc/MessageDialog.h"
+//#include "Framework/MultiBox/MultiBoxBuilder.h"
+//#include "Widgets/Layout/SBorder.h"
+//#include "Widgets/Text/STextBlock.h"
+//#include "Widgets/Layout/SBox.h"
+
+//#include "SlateIcon.h"
+//#include "Delegates/Delegate.h"
+//#include "Widgets/Images/SImage.h" 
+
+//#include "Framework/MultiBox/MultiBoxDefs.h"
+//#include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #include "LevelEditor.h"
+//#include <SlateDelegates.h>
+//#include "Internationalization/Internationalization.h"
+#include "EditorStyleSet.h"
 
 static const FName EditorToolbarTabName("EditorToolbar");
 
@@ -28,6 +41,25 @@ void FEditorToolbarModule::StartupModule()
 		FExecuteAction::CreateRaw(this, &FEditorToolbarModule::PluginButtonClicked),
 		FCanExecuteAction());
 		
+
+	PluginCommands->MapAction(
+		FEditorToolbarCommands::Get().PluginAction2,
+		FExecuteAction::CreateRaw(this, &FEditorToolbarModule::PluginButtonClicked2),
+		FCanExecuteAction());
+
+	PluginCommands->MapAction(FEditorToolbarCommands::Get().MenuItem_1,
+		FExecuteAction::CreateStatic(&FEditorToolbarModule::MenuItem_1_Execute),
+		FCanExecuteAction::CreateStatic(&FEditorToolbarModule::MenuItem_1_CanExecute) );
+
+
+	//bool FEditorToolbarModule::MenuItem_1_CanExecute()
+	//	void FEditorToolbarModule::MenuItem_1_Execute()
+
+	PluginCommands->MapAction(
+		FEditorToolbarCommands::Get().MenuItem_1,
+		FExecuteAction::CreateRaw(this, &FEditorToolbarModule::MenuItem_1_Clicked),
+		FCanExecuteAction());
+
 	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 	
 	{
@@ -44,6 +76,7 @@ void FEditorToolbarModule::StartupModule()
 		LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);
 	}
 }
+
 
 void FEditorToolbarModule::ShutdownModule()
 {
@@ -65,15 +98,109 @@ void FEditorToolbarModule::PluginButtonClicked()
 	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
 }
 
+void FEditorToolbarModule::PluginButtonClicked2()
+{
+	// Put your "OnButtonClicked" stuff here
+	FText DialogText = FText::Format(
+		LOCTEXT("PluginButtonDialogText2", "Add code to {0} in {1} to override this button's actions"),
+		FText::FromString(TEXT("FEditorToolbarModule::PluginButtonClicked2()")),
+		FText::FromString(TEXT("EditorToolbar.cpp"))
+	);
+	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+}
+
+void FEditorToolbarModule::MenuItem_1_Clicked()
+{
+	// Reset build options
+	FText DialogText = FText::Format(
+		LOCTEXT("PluginButtonDialogText", "Add code to {0} in {1} to override this button's actions"),
+		FText::FromString(TEXT("FEditorToolbarModule::MenuItem_1_Clicked()")),
+		FText::FromString(TEXT("EditorToolbar.cpp"))
+	);
+	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+}
+
+void FEditorToolbarModule::MenuItem_1_Execute()
+{
+	// Reset build options
+	FText DialogText = FText::Format(
+		LOCTEXT("PluginButtonDialogText", "Add code to {0} in {1} to override this button's actions"),
+		FText::FromString(TEXT("FEditorToolbarModule::PluginButtonClicked()")),
+		FText::FromString(TEXT("EditorToolbar.cpp"))
+	);
+	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+}
+
+bool FEditorToolbarModule::MenuItem_1_CanExecute()
+{
+	FText DialogText = FText::Format(
+		LOCTEXT("MenuItem_1_CanExecute", "Add code to {0} in {1} to override this button's actions"),
+		FText::FromString(TEXT("bool FEditorToolbarModule::MenuItem_1_CanExecute())")),
+		FText::FromString(TEXT("FEditorToolbarModule.cpp"))
+	);
+
+	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+
+	return true;
+}
+
 void FEditorToolbarModule::AddMenuExtension(FMenuBuilder& Builder)
 {
 	Builder.AddMenuEntry(FEditorToolbarCommands::Get().PluginAction);
 }
-
+ 
 void FEditorToolbarModule::AddToolbarExtension(FToolBarBuilder& Builder)
 {
+//#define LOCTEXT_NAMESPACE "LevelToolBarBuildMenu"
+
 	Builder.AddToolBarButton(FEditorToolbarCommands::Get().PluginAction);
+	Builder.AddToolBarButton(FEditorToolbarCommands::Get().PluginAction2);
+
+	TSharedRef<FUICommandList> InCommandList = PluginCommands.ToSharedRef();
+ 
+	Builder.AddComboButton(	FUIAction(), 
+							FOnGetContent::CreateStatic(&FEditorToolbarModule::GenerateComboMenuContent, InCommandList),
+							LOCTEXT("BuildCombo_Label", "Combo Options"), 
+							LOCTEXT("BuildComboToolTip", "Combo options menu"), 
+							FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.Build"),
+							true); 
+
 }
+ 
+TSharedRef< SWidget > FEditorToolbarModule::GenerateComboMenuContent(TSharedRef<FUICommandList> InCommandList)
+{
+	// Get all menu extenders for this context menu from the level editor module
+	FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>(TEXT("LevelEditor"));
+	TArray<FLevelEditorModule::FLevelEditorMenuExtender> MenuExtenderDelegates = LevelEditorModule.GetAllLevelEditorToolbarBuildMenuExtenders();
+
+	TArray<TSharedPtr<FExtender>> Extenders;
+	for (int32 i = 0; i < MenuExtenderDelegates.Num(); ++i)
+	{
+		if (MenuExtenderDelegates[i].IsBound())
+		{
+			Extenders.Add(MenuExtenderDelegates[i].Execute(InCommandList));
+		}
+	}
+	TSharedPtr<FExtender> MenuExtender = FExtender::Combine(Extenders);
+
+	const bool bShouldCloseWindowAfterMenuSelection = true;
+	FMenuBuilder MenuBuilder(bShouldCloseWindowAfterMenuSelection, InCommandList, MenuExtender);
+
+	//MenuBuilder
+	MenuBuilder.BeginSection("FEditorToolbarModule1", LOCTEXT("FEditorToolbarModule2", "FEditorToolbarModule3"));
+	{
+		MenuBuilder.AddMenuEntry(FEditorToolbarCommands::Get().MenuItem_1, NAME_None, LOCTEXT("FEditorToolbarModule4", "FEditorToolbarModule5"));
+	}
+	MenuBuilder.EndSection();
+
+
+ 
+
+
+	return MenuBuilder.MakeWidget();
+}
+
+
 
 #undef LOCTEXT_NAMESPACE
 	

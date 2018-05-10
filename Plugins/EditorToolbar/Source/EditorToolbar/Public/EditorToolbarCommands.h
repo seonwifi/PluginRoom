@@ -20,4 +20,8 @@ public:
 
 public:
 	TSharedPtr< FUICommandInfo > PluginAction;
+	TSharedPtr< FUICommandInfo > PluginAction2;
+
+	TSharedPtr< FUICommandInfo > MenuItem_1;
+	
 };

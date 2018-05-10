@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Widgets/SWidget.h"
+#include "Framework/Commands/UICommandList.h"
 #include "ModuleManager.h"
 
 class FToolBarBuilder;
@@ -19,11 +21,19 @@ public:
 	/** This function will be bound to Command. */
 	void PluginButtonClicked();
 	
+	void PluginButtonClicked2();
+
+	static bool MenuItem_1_CanExecute();
+	static void MenuItem_1_Execute();
+	void MenuItem_1_Clicked();
 private:
 
 	void AddToolbarExtension(FToolBarBuilder& Builder);
 	void AddMenuExtension(FMenuBuilder& Builder);
 
+public:
+	static TSharedRef< SWidget > GenerateComboMenuContent(TSharedRef<FUICommandList> InCommandList); 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;
+
 };
