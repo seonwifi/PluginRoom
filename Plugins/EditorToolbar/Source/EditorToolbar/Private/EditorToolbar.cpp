@@ -3,22 +3,22 @@
 #include "EditorToolbar.h"
 #include "EditorToolbarStyle.h"
 #include "EditorToolbarCommands.h"
-//#include "Misc/MessageDialog.h"
-//#include "Framework/MultiBox/MultiBoxBuilder.h"
-//#include "Widgets/Layout/SBorder.h"
-//#include "Widgets/Text/STextBlock.h"
-//#include "Widgets/Layout/SBox.h"
+#include "Misc/MessageDialog.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Widgets/Layout/SBorder.h"
+#include "Widgets/Text/STextBlock.h"
+#include "Widgets/Layout/SBox.h"
 
-//#include "SlateIcon.h"
-//#include "Delegates/Delegate.h"
-//#include "Widgets/Images/SImage.h" 
+#include "SlateIcon.h"
+#include "Delegates/Delegate.h"
+#include "Widgets/Images/SImage.h" 
 
-//#include "Framework/MultiBox/MultiBoxDefs.h"
-//#include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Framework/MultiBox/MultiBoxDefs.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 
 #include "LevelEditor.h"
-//#include <SlateDelegates.h>
-//#include "Internationalization/Internationalization.h"
+#include <SlateDelegates.h>
+#include "Internationalization/Internationalization.h"
 #include "EditorStyleSet.h"
 
 static const FName EditorToolbarTabName("EditorToolbar");
@@ -37,13 +37,13 @@ void FEditorToolbarModule::StartupModule()
 	PluginCommands = MakeShareable(new FUICommandList);
 
 	PluginCommands->MapAction(
-		FEditorToolbarCommands::Get().PluginAction,
+		FEditorToolbarCommands::Get().PluginActionAlmang,
 		FExecuteAction::CreateRaw(this, &FEditorToolbarModule::PluginButtonClicked),
 		FCanExecuteAction());
 		
 
 	PluginCommands->MapAction(
-		FEditorToolbarCommands::Get().PluginAction2,
+		FEditorToolbarCommands::Get().PluginActionKang,
 		FExecuteAction::CreateRaw(this, &FEditorToolbarModule::PluginButtonClicked2),
 		FCanExecuteAction());
 
@@ -146,15 +146,15 @@ bool FEditorToolbarModule::MenuItem_1_CanExecute()
 
 void FEditorToolbarModule::AddMenuExtension(FMenuBuilder& Builder)
 {
-	Builder.AddMenuEntry(FEditorToolbarCommands::Get().PluginAction);
+	Builder.AddMenuEntry(FEditorToolbarCommands::Get().PluginActionAlmang);
 }
  
 void FEditorToolbarModule::AddToolbarExtension(FToolBarBuilder& Builder)
 {
 //#define LOCTEXT_NAMESPACE "LevelToolBarBuildMenu"
 
-	Builder.AddToolBarButton(FEditorToolbarCommands::Get().PluginAction);
-	Builder.AddToolBarButton(FEditorToolbarCommands::Get().PluginAction2);
+	Builder.AddToolBarButton(FEditorToolbarCommands::Get().PluginActionAlmang);
+	Builder.AddToolBarButton(FEditorToolbarCommands::Get().PluginActionKang);
 
 	TSharedRef<FUICommandList> InCommandList = PluginCommands.ToSharedRef();
  
@@ -187,9 +187,9 @@ TSharedRef< SWidget > FEditorToolbarModule::GenerateComboMenuContent(TSharedRef<
 	FMenuBuilder MenuBuilder(bShouldCloseWindowAfterMenuSelection, InCommandList, MenuExtender);
 
 	//MenuBuilder
-	MenuBuilder.BeginSection("FEditorToolbarModule1", LOCTEXT("FEditorToolbarModule2", "FEditorToolbarModule3"));
+	MenuBuilder.BeginSection("FEditorToolbarModule1", LOCTEXT("FEditorToolbarModule2", "Kang MenuItems"));
 	{
-		MenuBuilder.AddMenuEntry(FEditorToolbarCommands::Get().MenuItem_1, NAME_None, LOCTEXT("FEditorToolbarModule4", "FEditorToolbarModule5"));
+		MenuBuilder.AddMenuEntry(FEditorToolbarCommands::Get().MenuItem_1, NAME_None, LOCTEXT("MenuItem", "MenuItem_1"));
 	}
 	MenuBuilder.EndSection();
 

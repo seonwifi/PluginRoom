@@ -6,9 +6,9 @@
 
 void FEditorToolbarCommands::RegisterCommands()
 {
-	UI_COMMAND(PluginAction, "EditorToolbar", "Execute EditorToolbar action", EUserInterfaceActionType::Button, FInputGesture());
+	UI_COMMAND(PluginActionAlmang, "Almang", "Execute EditorToolbar action", EUserInterfaceActionType::Button, FInputGesture());
 
-	UI_COMMAND(PluginAction2, "EditorToolbar2", "Execute EditorToolbar action2", EUserInterfaceActionType::Button, FInputGesture());
+	UI_COMMAND(PluginActionKang, "Kang", "Execute EditorToolbar action2", EUserInterfaceActionType::Button, FInputGesture());
 
 	UI_COMMAND(MenuItem_1, "MenuItem_1", "Execute MenuItem_1", EUserInterfaceActionType::Button, FInputGesture());
 	
